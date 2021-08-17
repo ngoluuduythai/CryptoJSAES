@@ -38,6 +38,8 @@ function decrypt (message) {
 
 var encrypted = encrypt(message);
 var decrypted = decrypt(encrypted);
+var encryptedBase64 = CryptoJS.enc.Base64.parse("cQUuPbeLu317Sj6bM9FPx9xSqKv6cNC2UdMiIHsphv0=");
 
-$('#encrypted').text("Encrypted: "+encrypted);
+$('#encrypted').text("Encrypted: "+ encrypted);
+$('#encrypted_base64').text("Encrypted Base64: "+ encrypted);
 $('#decrypted').text("Decrypted: "+ decrypted.toString(CryptoJS.enc.Hex) );
