@@ -1,43 +1,31 @@
-// Code goes here
-var keySize = 256;
-var ivSize = 128;
-var iterations = 100;
+var key = aesjs.utils.utf8.toBytes("SGVsbG8gYW5oIFRoYWlpaWk=");
+// The initialization vector (must be 16 bytes)
+var iv = [99, 10, 152, 128, 166, 26, 133, 191, 249, 38, 14, 167, 122, 46, 4, 129];
 
-var message = "Hello anh Thaiiii";
-var password = "Secret Password";
+// Convert text to bytes (text must be a multiple of 16 bytes)
+var text = 'Hello anh Thaiiii';
+var textBytes = aesjs.utils.utf8.toBytes(text);
 
+var aesCbc = new aesjs.ModeOfOperation.cbc(key, iv);
+const paddedData = aesjs.padding.pkcs7.pad(textBytes);
+var encryptedBytes = aesCbc.encrypt(paddedData);
 
-function encrypt (msg) {  
-  var key  =  CryptoJS.enc.Hex.parse("53475673624738675957356f4946526f59576c7061576b3d");
+// To print or store the binary data, you may convert it to hex
+var encryptedHex = aesjs.utils.hex.fromBytes(encryptedBytes);
+console.log(encryptedHex);
+// "104fb073f9a131f2cab49184bb864ca2"
 
-  var iv = CryptoJS.enc.Hex.parse("630a9880a61a85bff9260ea77a2e0481");
-  
-  var encrypted = CryptoJS.AES.encrypt(msg,key, { 
-    iv: iv, 
-    padding: CryptoJS.pad.Pkcs7,
-    mode: CryptoJS.mode.CBC
-  });
-  
-  return encrypted;
-}
+// When ready to decrypt the hex string, convert it back to bytes
+var encryptedBytes = aesjs.utils.hex.toBytes(encryptedHex);
 
-function decrypt (message) {
-  var iv = CryptoJS.enc.Hex.parse("630a9880a61a85bff9260ea77a2e0481");
-  var encrypted = message;
-  
-  var key  =  CryptoJS.enc.Hex.parse("53475673624738675957356f4946526f59576c7061576b3d");
+// The cipher-block chaining mode of operation maintains internal
+// state, so to decrypt a new instance must be instantiated.
+var aesCbc = new aesjs.ModeOfOperation.cbc(key, iv);
+var decryptedBytes = aesCbc.decrypt(encryptedBytes);
 
-  var decrypted = CryptoJS.AES.decrypt(encrypted, key, { 
-    iv: iv, 
-    padding: CryptoJS.pad.Pkcs7,
-    mode: CryptoJS.mode.CBC
-    
-  })
-  return decrypted;
-}
-
-var encrypted = encrypt(message);
-var decrypted = decrypt(encrypted);
-
-$('#encrypted').text("Encrypted: "+encrypted);
-$('#decrypted').text("Decrypted: "+ decrypted.toString(CryptoJS.enc.Hex) );
+// Convert our bytes back into text
+var decryptedText = aesjs.utils.utf8.fromBytes(decryptedBytes);
+console.log(decryptedText);
+// "TextMustBe16Byte"
+$('#encrypted').text("Encrypted: "+ encryptedHex);
+$('#encrypted_base64').text("Encrypted Base64: "+ decryptedText);
