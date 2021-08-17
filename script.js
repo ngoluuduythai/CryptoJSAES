@@ -1,45 +1,93 @@
 // Code goes here
 var keySize = 256;
 var ivSize = 128;
-var iterations = 100;
 
 var message = "Hello anh Thaiiii";
-var password = "Secret Password";
 
 
-function encrypt (msg) {  
-  var key  =  CryptoJS.enc.Hex.parse("53475673624738675957356f4946526f59576c7061576b3d");
+var key = CryptoJS.enc.Hex.parse(
+  "3666613937396632303132366362303861613634356138663439356636643835"
+);
+var iv = CryptoJS.enc.Hex.parse("630a9880a61a85bff9260ea77a2e0481");
 
+var encrypted = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(message), key,
+    {
+        keySize: keySize / 8,
+        iv: iv,
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7
+    });
+
+var decrypted = CryptoJS.AES.decrypt(encrypted, key, {
+    keySize: keySize / 8,
+    iv: iv,
+    mode: CryptoJS.mode.CBC,
+    padding: CryptoJS.pad.Pkcs7
+});
+
+console.log('Encrypted :' + encrypted);
+console.log('Key :' + encrypted.key);
+console.log('Salt :' + encrypted.salt);
+console.log('iv :' + encrypted.iv);
+console.log('Decrypted : ' + decrypted);
+console.log('utf8 = ' + decrypted.toString(CryptoJS.enc.Utf8));
+
+function encrypt(msg) {
+  var key = CryptoJS.enc.Hex.parse(
+    "3666613937396632303132366362303861613634356138663439356636643835"
+  );
   var iv = CryptoJS.enc.Hex.parse("630a9880a61a85bff9260ea77a2e0481");
   
-  var encrypted = CryptoJS.AES.encrypt(msg,key, { 
-    iv: iv, 
-    padding: CryptoJS.pad.Pkcs7,
-    mode: CryptoJS.mode.CBC
-  });
-  
+  var encrypted = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(message), key,
+      {
+          keySize: keySize / 8,
+          iv: iv,
+          mode: CryptoJS.mode.CBC,
+          padding: CryptoJS.pad.Pkcs7
+      });
+
+  console.log("encrypted   " + encrypted);
+
   return encrypted;
 }
 
-function decrypt (message) {
-  var iv = CryptoJS.enc.Hex.parse("630a9880a61a85bff9260ea77a2e0481");
-  var encrypted = message;
-  
-  var key  =  CryptoJS.enc.Hex.parse("53475673624738675957356f4946526f59576c7061576b3d");
 
-  var decrypted = CryptoJS.AES.decrypt(encrypted, key, { 
-    iv: iv, 
+function decrypt(message) {
+  var key = CryptoJS.enc.Hex.parse(
+    "3666613937396632303132366362303861613634356138663439356636643835"
+  );
+  var iv = CryptoJS.enc.Hex.parse("630a9880a61a85bff9260ea77a2e0481");
+
+  var decrypted = CryptoJS.AES.decrypt(message, key, {
+    keySize: 256 / 8,
+    iv: iv,
     padding: CryptoJS.pad.Pkcs7,
-    mode: CryptoJS.mode.CBC
-    
-  })
+    mode: CryptoJS.mode.CBC,
+  });
   return decrypted;
 }
 
-var encrypted = encrypt(message);
-var decrypted = decrypt(encrypted);
-var encryptedBase64 = CryptoJS.enc.Base64.parse("cQUuPbeLu317Sj6bM9FPx9xSqKv6cNC2UdMiIHsphv0=");
+function toWordArray(str) {
+  return CryptoJS.enc.Utf8.parse(str);
+}
 
-$('#encrypted').text("Encrypted: "+ encrypted);
-$('#encrypted_base64').text("Encrypted Base64: "+ encrypted);
-$('#decrypted').text("Decrypted: "+ decrypted.toString(CryptoJS.enc.Hex) );
+function toString(words) {
+  return CryptoJS.enc.Utf8.stringify(words);
+}
+
+function toBase64String(words) {
+  return CryptoJS.enc.Base64.stringify(words);
+}
+
+var encrypted = encrypt(message);
+
+console.log("encrypted.key");
+console.log(encrypted.key);
+console.log("encrypted.iv");
+console.log(encrypted.iv);
+
+var decrypted = decrypt(encrypted);
+
+$("#encrypted").text("Encrypted: " + encrypted);
+$("#encrypted_base64").text("Encrypted Base64: ");
+$("#decrypted").text("Decrypted: " + decrypted.toString(CryptoJS.enc.Hex));
