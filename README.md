@@ -1,2 +1,1 @@
-# CryptoJSAES
-Sample for test AES with CryptoJS lib
+Encryption and decryption using CryptoJS' AES implmentation
